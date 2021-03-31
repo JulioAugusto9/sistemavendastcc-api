@@ -1,0 +1,35 @@
+create table produto (
+	id bigint not null auto_increment,
+    descricao varchar(60) not null,
+    tipo_unidade varchar(20) not null,
+    
+    primary key (id)
+);
+
+create table preco (
+	id bigint not null auto_increment,
+	data_criacao date not null,
+	produto_id bigint not null,
+    preco decimal(15, 2) not null,
+    
+    primary key (id)
+);
+
+alter table preco add constraint fk_preco_produto
+foreign key (produto_id) references produto (id);
+
+drop table preco;
+
+select preco from preco p where data_criacao <= '2021-03-31' order by data_criacao desc limit 1;
+
+insert into produto values (1, 'tijolo', 'unidade');
+insert into preco values (1, now(), 1, 10.5);
+insert into preco values (2, '2021-03-31', 1, 10.5);
+insert into preco values (3, '2021-01-10', 1, 10.5);
+update preco set preco = 12.5 where id = 3;
+
+select * from preco;
+
+select * from produto;
+
+
