@@ -45,7 +45,13 @@ public class Preco {
 	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
 	}
-	
+	public Preco() {}
+	public Preco(Long id, LocalDate dataCriacao, BigDecimal preco) {
+		super();
+		this.id = id;
+		this.dataCriacao = dataCriacao;
+		this.preco = preco;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

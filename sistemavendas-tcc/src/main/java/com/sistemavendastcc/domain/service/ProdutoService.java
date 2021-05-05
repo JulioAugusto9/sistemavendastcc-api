@@ -1,20 +1,22 @@
 package com.sistemavendastcc.domain.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.sistemavendastcc.api.model.ProdutoDTO;
+import com.sistemavendastcc.domain.exception.NegocioException;
 import com.sistemavendastcc.domain.model.Preco;
 import com.sistemavendastcc.domain.model.Produto;
-import com.sistemavendastcc.repository.PrecoRepository;
-import com.sistemavendastcc.repository.ProdutoRepository;
+import com.sistemavendastcc.domain.repository.PrecoRepository;
+import com.sistemavendastcc.domain.repository.ProdutoRepository;
 
 @Service
+@Transactional
 public class ProdutoService {
 	
 	@Autowired
@@ -23,40 +25,23 @@ public class ProdutoService {
 	@Autowired
 	private PrecoRepository precoRepository;
 	
-	public List<Produto> listar() {
-		List<Produto> produtos = produtoRepository.findAll();
-		for (Produto p : produtos) {
-			Preco preco = buscarPrecoAtual(p.getId());
-			p.setPreco(preco.getPreco());
-		}
-		return produtos;
-	}
-	
-	public Optional<Produto> buscar(Long produtoId) {
-		Optional<Produto> produto = produtoRepository.findById(produtoId);
-		
-		if (produto.isPresent()) {
-			Preco preco = buscarPrecoAtual(produtoId);
-			produto.get().setPreco(preco.getPreco());
-		}
-		
-		return produto;
-	}
-	
-	public Produto criar(Produto produto) {
+	public ProdutoDTO criar(Produto produto, BigDecimal precoProduto) {
 		Produto produtoCriado = produtoRepository.save(produto);
-		Preco preco = new Preco(); 
-		preco.setDataCriacao(LocalDate.now()); 
+		Preco preco = new Preco(null, LocalDate.now(), precoProduto);
 		preco.setProduto(produtoCriado);
-		preco.setPreco(produto.getPreco());
+		System.out.println(produtoCriado.getId());
 		Preco precoCriado = precoRepository.save(preco);
-		produtoCriado.setPreco(precoCriado.getPreco());
-		return produtoCriado;
+		System.out.println(precoCriado.getProduto().getId());
+		return ProdutoDTO.from(precoCriado.getProduto());
 	}
 	
-	private Preco buscarPrecoAtual(Long produtoId) {
-		return precoRepository.findByProdutoAndDataCriacao(produtoId, LocalDate.now(), 
-				PageRequest.of(0, 1, Sort.by("dataCriacao").descending())).get(0);
+	public Preco novoPreco(Long produtoId, Preco novoPreco) {
+		Produto produto = produtoRepository.findById(produtoId)
+				.orElseThrow(() -> new NegocioException("Produto não encontrado"));
+		
+		novoPreco.setProduto(produto);
+		
+		return precoRepository.save(novoPreco);
 	}
 	
 }

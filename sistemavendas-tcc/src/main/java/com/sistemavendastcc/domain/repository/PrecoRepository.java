@@ -1,4 +1,4 @@
-package com.sistemavendastcc.repository;
+package com.sistemavendastcc.domain.repository;
 
 import java.time.LocalDate;
 import java.util.List;
