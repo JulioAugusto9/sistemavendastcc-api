@@ -1,3 +1,5 @@
+-- Produto e Precos
+
 create table produto (
 	id bigint not null auto_increment,
     descricao varchar(60) not null,
@@ -32,4 +34,63 @@ select * from preco;
 
 select * from produto;
 
+-- Cliente, Pessoa Fisica e Pessoa Juridica
 
+create table cliente (
+	id bigint not null auto_increment,
+    nome varchar(60),
+    endereco varchar(60),
+    numero_residencia bigint,
+    bairro varchar(60),
+    complemento varchar(60),
+    CEP varchar(60),
+    Cidade varchar(60),
+    email varchar(60),
+    telefone varchar(60),
+    UF varchar(5),
+    
+    primary key (id)
+);
+
+insert into cliente values (1, 'Joao', 'Rua das Flores', 45, 'Santa Clara', null, '1234567', 'Sorocaba', 'joao@zin.ho', '11999995555', 'SP');
+insert into cliente values (2, 'Empreiteira Silva', 'Rua dos Cravos', 85, 'Santa Rita', null, '3456789', 'Sorocaba', 'empreiteira@sil.va', '11999995554', 'SP');
+select * from cliente;
+
+create table pessoa_juridica (
+	id bigint not null,
+    CNPJ varchar(60),
+    inscricao_estadual varchar(60),
+    data_fundacao date,
+    
+    primary key (id)
+);
+alter table pessoa_juridica add constraint fk_pessoa_juridica_cliente
+foreign key (id) references cliente (id);
+
+insert into pessoa_juridica values (2, '78945612322', '22321654987', '2002-00-00');
+update pessoa_juridica set data_fundacao = '2002-01-01' where id = 2;
+select * from pessoa_juridica;
+
+select * from cliente c inner join pessoa_juridica pj
+on c.id = pj.id;
+
+create table pessoa_fisica (
+	id bigint not null,
+    CPF varchar(60),
+    RG varchar(60),
+    data_nascimento date,
+    
+    primary key (id)
+);
+alter table pessoa_fisica add constraint fk_pessoa_fisica_cliente
+foreign key (id) references cliente (id);
+
+insert into pessoa_fisica values (1, 9876543210, 1234567891, '1980-07-01');
+select * from pessoa_fisica;
+
+select * from cliente c inner join pessoa_fisica pf
+on c.id = pf.id;
+
+drop table cliente;
+drop table pessoa_juridica;
+drop table pessoa_fisica;

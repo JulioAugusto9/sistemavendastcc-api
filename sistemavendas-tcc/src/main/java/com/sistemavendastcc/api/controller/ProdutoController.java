@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +28,7 @@ import com.sistemavendastcc.domain.repository.ProdutoRepository;
 import com.sistemavendastcc.domain.service.ProdutoService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/produtos")
 public class ProdutoController {
 	
@@ -34,9 +39,13 @@ public class ProdutoController {
 	private ProdutoRepository produtoRepository;
 	
 	@GetMapping
-	List<ProdutoDTO> listar() {
+	List<ProdutoDTO> listar(@RequestParam(required = false) String descricao, @RequestParam(required = false) Integer page) {
+		if (descricao == null) descricao = "";
 		List<ProdutoDTO> produtos = new ArrayList<>();
-		for (Produto prod :  produtoRepository.findAll()) {
+		if (page == null) page = 0;
+		else page--;
+		Pageable pageable = PageRequest.of(page, 5);
+		for (Produto prod :  produtoRepository.findByDescricaoContaining(descricao, pageable)) {
 			produtos.add(ProdutoDTO.from(prod));
 		}
 		return produtos;
