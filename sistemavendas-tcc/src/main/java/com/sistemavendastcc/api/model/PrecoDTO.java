@@ -6,8 +6,19 @@ import java.time.LocalDate;
 import com.sistemavendastcc.domain.model.Preco;
 
 public class PrecoDTO {
+	private Long id;
 	private LocalDate dataCriacao;
 	private BigDecimal preco;
+
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public LocalDate getDataCriacao() {
 		return dataCriacao;
@@ -25,13 +36,14 @@ public class PrecoDTO {
 		this.preco = preco;
 	}
 	
-	public PrecoDTO(LocalDate dataCriacao, BigDecimal preco) {
+	public PrecoDTO(Long id, LocalDate dataCriacao, BigDecimal preco) {
 		super();
+		this.id = id;
 		this.dataCriacao = dataCriacao;
 		this.preco = preco;
 	}
 
 	public static PrecoDTO from(Preco preco) {
-		return new PrecoDTO(preco.getDataCriacao(), preco.getPreco());
+		return new PrecoDTO(preco.getId(), preco.getDataCriacao(), preco.getPreco());
 	}
 }

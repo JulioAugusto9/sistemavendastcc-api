@@ -26,6 +26,7 @@ public class ProdutoService {
 	private PrecoRepository precoRepository;
 	
 	public ProdutoDTO criar(Produto produto, BigDecimal precoProduto) {
+		produto.setDataInclusao(LocalDate.now());
 		Produto produtoCriado = produtoRepository.save(produto);
 		Preco preco = new Preco(null, LocalDate.now(), precoProduto);
 		preco.setProduto(produtoCriado);
@@ -39,6 +40,7 @@ public class ProdutoService {
 		Produto produto = produtoRepository.findById(produtoId)
 				.orElseThrow(() -> new NegocioException("Produto não encontrado"));
 		
+		novoPreco.setDataInclusao(LocalDate.now());
 		novoPreco.setProduto(produto);
 		
 		return precoRepository.save(novoPreco);

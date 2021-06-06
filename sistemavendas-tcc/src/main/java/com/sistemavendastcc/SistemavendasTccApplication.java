@@ -8,6 +8,7 @@ public class SistemavendasTccApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SistemavendasTccApplication.class, args);
+		System.out.println("login: admin, senha: admin");
 	}
 
 }

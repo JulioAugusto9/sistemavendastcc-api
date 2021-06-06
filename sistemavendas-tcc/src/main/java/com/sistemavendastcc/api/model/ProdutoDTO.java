@@ -2,13 +2,22 @@ package com.sistemavendastcc.api.model;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.sistemavendastcc.domain.model.Produto;
 
 public class ProdutoDTO {
 	private Long id;
+	@NotNull
+	@NotEmpty
 	private String descricao;
+	@NotNull
+	@NotEmpty
 	private String TipoUnidade;
+	@NotNull
 	private BigDecimal preco;
+	
 	public Long getId() {
 		return id;
 	}

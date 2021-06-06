@@ -7,13 +7,17 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Produto {
@@ -21,10 +25,15 @@ public class Produto {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotNull
+	@NotEmpty
 	private String descricao;
+	@NotNull
+	@NotEmpty
 	private String TipoUnidade;
+	private LocalDate dataInclusao;
 	
-	@OneToMany(mappedBy = "produto")
+	@OneToMany(mappedBy = "produto", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
 	@MapKey(name = "dataCriacao")
 	@OrderBy("dataCriacao")
 	private SortedMap<LocalDate, Preco> precos;
@@ -70,12 +79,24 @@ public class Produto {
 	public BigDecimal getPrecoAtual() {
 		if (precos == null) return new BigDecimal(0);
 		SortedMap<LocalDate, Preco> precoslocal = precos;
+		//if (precoslocal == null) return new BigDecimal(0);
 		if (!precoslocal.getClass().equals(TreeMap.class)) {
 			precoslocal = new TreeMap<LocalDate, Preco>(precos);
 		}
-		Preco precoAtual = (((TreeMap<LocalDate, Preco>)precoslocal).floorEntry(LocalDate.now())).getValue();
+		var entry = (((TreeMap<LocalDate, Preco>)precoslocal).floorEntry(LocalDate.now()));
+		if (entry == null) return new BigDecimal(0);
+		Preco precoAtual = entry.getValue();
+		//if (precoAtual == null) return new BigDecimal(0);
 		return precoAtual.getPreco();
 	}
+	public LocalDate getDataInclusao() {
+		return dataInclusao;
+	}
+
+	public void setDataInclusao(LocalDate dataInclusao) {
+		this.dataInclusao = dataInclusao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

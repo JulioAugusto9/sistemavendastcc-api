@@ -7,6 +7,7 @@ create table produto (
     
     primary key (id)
 );
+alter table produto add column data_inclusao date after tipo_unidade;
 
 create table preco (
 	id bigint not null auto_increment,
@@ -16,13 +17,14 @@ create table preco (
     
     primary key (id)
 );
+alter table preco add column data_inclusao date after preco;
 
 alter table preco add constraint fk_preco_produto
 foreign key (produto_id) references produto (id);
 
 drop table preco;
 
-select preco from preco p where data_criacao <= '2021-03-31' order by data_criacao desc limit 1;
+select preco from preco p where produto_id = 2 and data_criacao <= '2021-03-31' order by data_criacao desc limit 1;
 
 insert into produto values (1, 'tijolo', 'unidade');
 insert into preco values (1, now(), 1, 10.5);
@@ -51,6 +53,8 @@ create table cliente (
     
     primary key (id)
 );
+alter table cliente add column data_inclusao date after UF;
+alter table cliente add column tipo varchar(20);
 
 insert into cliente values (1, 'Joao', 'Rua das Flores', 45, 'Santa Clara', null, '1234567', 'Sorocaba', 'joao@zin.ho', '11999995555', 'SP');
 insert into cliente values (2, 'Empreiteira Silva', 'Rua dos Cravos', 85, 'Santa Rita', null, '3456789', 'Sorocaba', 'empreiteira@sil.va', '11999995554', 'SP');
@@ -94,3 +98,62 @@ on c.id = pf.id;
 drop table cliente;
 drop table pessoa_juridica;
 drop table pessoa_fisica;
+
+-- Usuarios
+
+create table usuario (
+	id bigint not null,
+    nome varchar(60),
+    login varchar(60) unique,
+    senha varchar(80),
+    nome_role varchar(50),
+    data_inclusao date,
+    
+    primary key(id)
+);
+alter table usuario modify id bigint not null auto_increment;
+
+select * from usuario;
+
+insert into usuario values (1, 'admin', 'admin', 'admin', 'ROLE_GERENTE', now());
+insert into usuario values (2, 'vendedor', 'vend', 'vend', 'ROLE_VENDEDOR', now());
+
+drop table usuario;
+
+-- Pedido
+create table pedido (
+	id bigint not null auto_increment,
+    data_criacao date,
+    estado varchar(20),
+    desconto decimal(15, 2),
+    usuario_id bigint not null,
+    cliente_id bigint not null,
+    
+    primary key(id)
+);
+
+alter table pedido add constraint fk_pedido_usuario
+foreign key (usuario_id) references usuario (id);
+
+alter table pedido add constraint fk_pedido_cliente
+foreign key (cliente_id) references cliente (id);
+
+select * from pedido;
+
+insert into pedido values (1, now(), 'ABERTO', 0, 1, 1);
+
+drop table pedido;
+
+-- item pedido
+create table item_pedido (
+	id bigint not null auto_increment,
+    preco decimal(15, 2) not null, 
+    qtde bigint not null,
+    produto_id bigint not null,
+    pedido_id bigint not null,
+    
+    primary key (id)
+)
+
+
+

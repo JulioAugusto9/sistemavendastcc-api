@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -15,6 +17,8 @@ public class Cliente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@NotNull
+	@NotEmpty
 	private String nome;
 	private String endereco;
 	private Long numero_residencia;
@@ -25,6 +29,11 @@ public class Cliente {
 	private String email;
 	private String telefone; 
 	private String UF;
+	private LocalDate dataInclusao;
+	@NotNull
+	@NotEmpty
+	private String tipo;
+	
 	public Long getId() {
 		return id;
 	}
@@ -91,6 +100,23 @@ public class Cliente {
 	public void setUF(String uF) {
 		UF = uF;
 	}
+	
+	
+	public LocalDate getDataInclusao() {
+		return dataInclusao;
+	}
+	public void setDataInclusao(LocalDate dataInclusao) {
+		this.dataInclusao = dataInclusao;
+	}
+	
+	
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

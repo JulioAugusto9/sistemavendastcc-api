@@ -13,4 +13,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 	
 	List<Produto> findByDescricaoContaining(String descricao, Pageable pageable);
 	
+	Long countByDescricaoContaining(String descricao);
+	
 }
