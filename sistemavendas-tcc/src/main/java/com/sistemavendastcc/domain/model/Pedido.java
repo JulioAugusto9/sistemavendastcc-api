@@ -2,7 +2,9 @@ package com.sistemavendastcc.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Pedido {
@@ -18,9 +20,7 @@ public class Pedido {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@NotNull
 	private LocalDate dataCriacao;
-	@NotNull
 	private BigDecimal desconto;
 	
 	@Enumerated(EnumType.STRING)
@@ -31,6 +31,16 @@ public class Pedido {
 	
 	@ManyToOne
 	Cliente cliente;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
+	List<ItemPedido> itensPedido;
+	
+	public BigDecimal getPrecoTotal() {
+		return itensPedido.stream()
+				.map((ip) -> ip.getPreco().multiply(new BigDecimal(ip.getQtde())) )
+				.reduce(new BigDecimal(0), (acc, prox) -> acc.add(prox))
+				.subtract(this.desconto);
+	}
 
 	public Long getId() {
 		return id;
@@ -70,6 +80,22 @@ public class Pedido {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
+	}
+
+	public EstadoPedido getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoPedido estado) {
+		this.estado = estado;
+	}
+
+	public List<ItemPedido> getItensPedido() {
+		return itensPedido;
+	}
+
+	public void setItensPedido(List<ItemPedido> itensPedido) {
+		this.itensPedido = itensPedido;
 	}
 
 	@Override

@@ -140,6 +140,11 @@ foreign key (cliente_id) references cliente (id);
 
 select * from pedido;
 
+select * from pedido p inner join item_pedido ip
+on p.id = ip.pedido_id
+inner join produto prod 
+on prod.id = ip.produto_id;
+
 insert into pedido values (1, now(), 'ABERTO', 0, 1, 1);
 
 drop table pedido;
@@ -153,7 +158,15 @@ create table item_pedido (
     pedido_id bigint not null,
     
     primary key (id)
-)
+);
+alter table item_pedido add constraint fk_itempedido_produto
+foreign key (produto_id) references produto (id);
 
+alter table item_pedido add constraint fk_itempedido_pedido
+foreign key (pedido_id) references pedido (id);
+
+insert into item_pedido values (1, 1.50, 2, 1, 1);
+
+select * from item_pedido;
 
 

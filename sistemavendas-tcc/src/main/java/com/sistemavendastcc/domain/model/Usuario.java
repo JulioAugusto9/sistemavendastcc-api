@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Usuario implements UserDetails{
 	private static final long serialVersionUID = 1L;
@@ -71,7 +73,8 @@ public class Usuario implements UserDetails{
 	public void setDataInclusao(LocalDate dataInclusao) {
 		this.dataInclusao = dataInclusao;
 	}
-	
+
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<Role> roles = new ArrayList<Role>();
