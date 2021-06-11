@@ -169,4 +169,18 @@ insert into item_pedido values (1, 1.50, 2, 1, 1);
 
 select * from item_pedido;
 
+-- Nota Fiscal
+create table nota_fiscal (
+	id bigint not null,
+    cfop bigint not null,
+    nat_op varchar(60) not null,
+    uniao decimal(15, 2) not null,
+    icms decimal(15, 2) not null,
+    sub_tri_icms decimal(15, 2) not null,
+    preco decimal(15, 2) not null,
+    
+    primary key(id)
+);
+alter table nota_fiscal add column data_inclusao date after preco;
 
+select * from nota_fiscal;
